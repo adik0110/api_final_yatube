@@ -11,7 +11,7 @@ from rest_framework import filters
 class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
-    permission_classes = (IsAuthorOrReadOnly,)
+    permission_classes = (IsAuthorOrReadOnly, permissions.IsAuthenticated)
     pagination_class = LimitOffsetPagination
 
     def perform_create(self, serializer):
