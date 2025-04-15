@@ -20,7 +20,7 @@ class PostViewSet(viewsets.ModelViewSet):
 
 class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
-    permission_classes = (IsAuthorOrReadOnly,)
+    permission_classes = (IsAuthorOrReadOnly, permissions.IsAuthenticated)
 
     def get_queryset(self):
         post_id = self.kwargs.get('post_id')
@@ -43,7 +43,7 @@ class FollowViewSet(viewsets.ModelViewSet):
     serializer_class = FollowSerializer
     http_method_names = ['get', 'post']
     filter_backends = (filters.SearchFilter,)
-    search_fields = ('following',)
+    search_fields = ('following__username',)
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
