@@ -1,8 +1,10 @@
 from rest_framework import viewsets, permissions
-from posts.models import Post, Comment, Group, Follow
-from .serializers import PostSerializer, CommentSerializer, GroupSerializer, FollowSerializer
+from posts.models import Post, Group, Follow
+from .serializers import (PostSerializer, CommentSerializer,
+                          GroupSerializer, FollowSerializer)
 from .permissions import IsAuthorOrReadOnly
 from django.shortcuts import get_object_or_404
+
 
 class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all()
