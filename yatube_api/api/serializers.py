@@ -1,9 +1,10 @@
 from rest_framework import serializers
 from rest_framework.relations import SlugRelatedField
 from django.db.utils import IntegrityError
-
-
 from posts.models import Comment, Post, Group, Follow
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 
 class PostSerializer(serializers.ModelSerializer):
@@ -33,6 +34,7 @@ class GroupSerializer(serializers.ModelSerializer):
 
 class FollowSerializer(serializers.ModelSerializer):
     user = serializers.SlugRelatedField(slug_field='username', read_only=True)
+    following = serializers.CharField()
 
     class Meta:
         model = Follow
@@ -46,3 +48,19 @@ class FollowSerializer(serializers.ModelSerializer):
                 {"error": "Вы уже подписаны на этого пользователя."},
                 code=400
             )
+
+    def validate_following(self, value):
+        """Преобразуем username в объект User"""
+        try:
+            user = User.objects.get(username=value)
+            if user == self.context['request'].user:
+                raise serializers.ValidationError("Нельзя подписаться на себя")
+            return user
+        except User.DoesNotExist:
+            raise serializers.ValidationError("Пользователь не найден")
+
+    # def to_representation(self, instance):
+    #     """Для вывода возвращаем username вместо ID"""
+    #     ret = super().to_representation(instance)
+    #     ret['following'] = instance.following.username
+    #     return ret
