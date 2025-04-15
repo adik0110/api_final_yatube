@@ -39,11 +39,13 @@ class GroupViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class FollowViewSet(viewsets.ModelViewSet):
-    queryset = Follow.objects.all()
     serializer_class = FollowSerializer
     http_method_names = ['get', 'post']
     filter_backends = (filters.SearchFilter,)
     search_fields = ('following__username',)
+
+    def get_queryset(self):
+        return Follow.objects.filter(user=self.request.user)
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)

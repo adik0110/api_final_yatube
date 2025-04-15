@@ -50,7 +50,6 @@ class FollowSerializer(serializers.ModelSerializer):
             )
 
     def validate_following(self, value):
-        """Преобразуем username в объект User"""
         try:
             user = User.objects.get(username=value)
             if user == self.context['request'].user:
@@ -58,9 +57,3 @@ class FollowSerializer(serializers.ModelSerializer):
             return user
         except User.DoesNotExist:
             raise serializers.ValidationError("Пользователь не найден")
-
-    # def to_representation(self, instance):
-    #     """Для вывода возвращаем username вместо ID"""
-    #     ret = super().to_representation(instance)
-    #     ret['following'] = instance.following.username
-    #     return ret
